@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bbbale-chambers-rebuild-staging",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-15",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "d1_databases": [
+    {
+      "binding": "CHAMBERS_DB",
+      "database_name": "REPLACE_WITH_VERIFIED_EXISTING_DATABASE_NAME",
+      "database_id": "REPLACE_WITH_VERIFIED_EXISTING_D1_DATABASE_ID"
+    },
+    {
+      "binding": "DB",
+      "database_name": "REPLACE_WITH_VERIFIED_EXISTING_DATABASE_NAME",
+      "database_id": "REPLACE_WITH_VERIFIED_EXISTING_D1_DATABASE_ID"
+    }
+  ],
+  "vars": {
+    "NODE_ENV": "production",
+    "ENABLE_CLOUDSQL": "false"
+  }
+}

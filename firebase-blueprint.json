@@ -1,0 +1,175 @@
+{
+  "entities": {
+    "Branch": {
+      "title": "Branch",
+      "description": "Chambers physical or autonomous branch office in Nigeria",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 200 },
+        "code": { "type": "string", "maxLength": 20 },
+        "state": { "type": "string", "maxLength": 100 },
+        "lga": { "type": "string", "maxLength": 100 },
+        "address": { "type": "string", "maxLength": 500 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "email": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["Active", "Suspended"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "code", "state", "status"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Chambers staff, counsel, partner, or administrative user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "username": { "type": "string", "maxLength": 100 },
+        "fullName": { "type": "string", "maxLength": 150 },
+        "email": { "type": "string", "maxLength": 120 },
+        "role": { "type": "string", "maxLength": 50 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["Active", "Suspended"] },
+        "password": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "username", "role", "branchId", "status"]
+    },
+    "Matter": {
+      "title": "Matter",
+      "description": "Legal case brief, suit, dispute, or advisory matter",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 64 },
+        "suitNumber": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 300 },
+        "courtCategory": { "type": "string", "maxLength": 150 },
+        "caseType": { "type": "string", "maxLength": 100 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "leadCounsel": { "type": "string", "maxLength": 150 },
+        "status": { "type": "string", "enum": ["Active", "Adjourned", "Judgement", "Closed"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "code", "title", "branchId", "status"]
+    },
+    "Client": {
+      "title": "Client",
+      "description": "Chambers corporate or individual client profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 64 },
+        "fullName": { "type": "string", "maxLength": 200 },
+        "clientType": { "type": "string", "enum": ["Individual", "Corporate", "Government"] },
+        "email": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "code", "fullName", "branchId"]
+    },
+    "Property": {
+      "title": "Property",
+      "description": "Managed real estate asset or portfolio listing",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 200 },
+        "propertyType": { "type": "string", "maxLength": 100 },
+        "address": { "type": "string", "maxLength": 400 },
+        "state": { "type": "string", "maxLength": 100 },
+        "unitsCount": { "type": "number" },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "code", "name", "branchId"]
+    },
+    "ConsultationBooking": {
+      "title": "ConsultationBooking",
+      "description": "Public legal consultation intake appointments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "referenceNumber": { "type": "string", "maxLength": 64 },
+        "clientName": { "type": "string", "maxLength": 150 },
+        "clientEmail": { "type": "string", "maxLength": 120 },
+        "clientPhone": { "type": "string", "maxLength": 50 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "consultationType": { "type": "string", "maxLength": 50 },
+        "preferredDate": { "type": "string", "maxLength": 30 },
+        "paymentStatus": { "type": "string", "enum": ["Pending", "Paid", "Waived"] },
+        "feeAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["Confirmed", "Pending", "Cancelled"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "referenceNumber", "clientName", "branchId", "status"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Live message between client and chambers receptionist/counsel",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "sessionId": { "type": "string", "maxLength": 128 },
+        "sender": { "type": "string", "enum": ["visitor", "admin"] },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "sessionId", "sender", "message", "timestamp"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable audit record for compliance and legal accountability",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "actor": { "type": "string", "maxLength": 150 },
+        "actorRole": { "type": "string", "maxLength": 100 },
+        "action": { "type": "string", "maxLength": 100 },
+        "targetEntity": { "type": "string", "maxLength": 100 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "action", "actor", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/branches/{branchId}": {
+      "schema": "Branch",
+      "description": "Chambers active and archived branch offices"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Chambers personnel and access credentials"
+    },
+    "/matters/{matterId}": {
+      "schema": "Matter",
+      "description": "Legal briefs and litigation matters"
+    },
+    "/clients/{clientId}": {
+      "schema": "Client",
+      "description": "Clients and KYC documentation"
+    },
+    "/properties/{propertyId}": {
+      "schema": "Property",
+      "description": "Property management assets"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "ConsultationBooking",
+      "description": "Public consultation bookings"
+    },
+    "/chat_messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Live chat correspondence"
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Chambers audit trail"
+    }
+  }
+}

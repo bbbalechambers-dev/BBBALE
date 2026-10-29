@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix B. B. BALE \u0026 CO Chambers Management System",
+  "description": "Integrated Multi-Branch Law Firm, Property, HR, Operations, Alerts, Dual-Site, Sensitive Access Control, Live Chat, Financial, Legal Document, Hierarchical, Security, Backup, Cross-Device Sync \u0026 Local File Upload Management System.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

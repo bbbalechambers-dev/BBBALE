@@ -1,0 +1,100 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'bbbalechambers@gmail.com' ||
+        request.auth.token.email == 'seedatshinge@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Test connection path (used by boot check)
+    match /test/{testId} {
+      allow get: if true;
+      allow write: if false;
+    }
+
+    // Branches collection (Public directory of chambers locations; modified by admin)
+    match /branches/{branchId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(branchId);
+    }
+
+    // Users / Staff directory (Secured for chambers personnel)
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isSignedIn();
+      allow create, update, delete: if isAdmin() && isValidId(userId);
+    }
+
+    // Matters & Litigation registry
+    match /matters/{matterId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && isValidId(matterId);
+    }
+
+    // Clients & KYC records
+    match /clients/{clientId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && isValidId(clientId);
+    }
+
+    // Real estate properties portfolio (Public portfolio listings; staff management)
+    match /properties/{propertyId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(propertyId);
+    }
+
+    // Public Consultation Intake Bookings
+    match /bookings/{bookingId} {
+      allow get: if isSignedIn() || (isSignedIn() && resource.data.clientEmail == request.auth.token.email);
+      allow list: if isSignedIn();
+      allow create: if isValidId(bookingId) &&
+        incoming().clientName is string && incoming().clientName.size() <= 150 &&
+        incoming().branchId is string && incoming().branchId.size() <= 128;
+      allow update, delete: if isSignedIn() && isValidId(bookingId);
+    }
+
+    // Live Chat Sessions & Messages
+    match /chat_messages/{messageId} {
+      allow get, list: if true;
+      allow create: if isValidId(messageId) &&
+        incoming().message is string && incoming().message.size() <= 2000 &&
+        incoming().sessionId is string && incoming().sessionId.size() <= 128;
+      allow update, delete: if isSignedIn() && isValidId(messageId);
+    }
+
+    // Audit Trail (Immutable, append-only or admin review)
+    match /audit_logs/{logId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidId(logId) &&
+        incoming().action is string && incoming().action.size() <= 100 &&
+        incoming().actor is string && incoming().actor.size() <= 150;
+      allow update, delete: if false; // Immutable audit trail
+    }
+  }
+}

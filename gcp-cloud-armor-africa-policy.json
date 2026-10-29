@@ -1,0 +1,53 @@
+{
+  "kind": "compute#securityPolicy",
+  "name": "chambers-africa-only-policy",
+  "description": "Google Cloud Armor Security Policy: Restrict B. B. BALE & CO Chambers access exclusively to sovereign African jurisdictions on africa-south1",
+  "type": "CLOUD_ARMOR",
+  "rules": [
+    {
+      "priority": 1000,
+      "description": "Allow traffic originating exclusively from 54 African Union sovereign member states",
+      "action": "allow",
+      "preview": false,
+      "match": {
+        "expr": {
+          "expression": "origin.region_code in ['DZ','AO','BJ','BW','BF','BI','CV','CM','CF','TD','KM','CG','CD','CI','DJ','EG','GQ','ER','SZ','ET','GA','GM','GH','GN','GW','KE','LS','LR','LY','MG','MW','ML','MR','MU','MA','MZ','NA','NE','NG','RW','ST','SN','SC','SL','SO','ZA','SS','SD','TZ','TG','TN','UG','ZM','ZW']"
+        }
+      }
+    },
+    {
+      "priority": 1001,
+      "description": "Exempt Authorized Chambers International Counsel IP bypass list / VPN gateway",
+      "action": "allow",
+      "preview": false,
+      "match": {
+        "versionedExpr": "SRC_IPS_V1",
+        "config": {
+          "srcIpRanges": [
+            "10.0.0.0/8",
+            "172.16.0.0/12",
+            "192.168.0.0/16"
+          ]
+        }
+      }
+    },
+    {
+      "priority": 2147483647,
+      "description": "Default Deny: Reject all traffic originating outside the African continent",
+      "action": "deny(403)",
+      "preview": false,
+      "match": {
+        "versionedExpr": "SRC_IPS_V1",
+        "config": {
+          "srcIpRanges": ["*"]
+        }
+      }
+    }
+  ],
+  "adaptiveProtectionConfig": {
+    "layer7DdosDefenseConfig": {
+      "enable": true,
+      "ruleVisibility": "STANDARD"
+    }
+  }
+}
